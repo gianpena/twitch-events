@@ -117,10 +117,22 @@ class TwitchClientConnection {
 const client = new TwitchClientConnection();
 console.log(`[CLIENT] Please authorize at https://id.twitch.tv/oauth2/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code&scope=user:read:email.`);
 console.log('[CLIENT] Once you are finished, paste the access and refresh tokens here, then press enter.');
-process.stdin.once('data', () => {
-  ACCESS_TOKEN = data.toString().trim();
-  setInterval(() => {
-    // TODO: Refresh token logic
-  }, 1000 * 3600);
+process.stdin.once('data', (data) => {
+  const [ access, refresh ] = data.toString().trim().split(' ');
+  ACCESS_TOKEN = access;
+  REFRESH_TOKEN = refresh;
+  console.log('[CLIENT] Tokens received, attempting to establish websocket connection...');
+  setInterval( async () => {
+    const refresh_response = await fetch(`https://twitch.gianpena.xyz/refresh?refresh_token=${REFRESH_TOKEN}`);
+    const refresh_data = await refresh_response.json();
+    const { access_token, refresh_token } = refresh_data;
+    if(access_token && refresh_token) {
+      ACCESS_TOKEN = access_token;
+      REFRESH_TOKEN = refresh_token;
+      console.log('[CLIENT] Token refreshed successfully');
+    } else {
+      console.error('[CLIENT] Failed to refresh token:', refresh_data);
+    }
+  }, 1000 * 60 * 60);
   client.connect(TWITCH_SOCKET_URL);
 });
