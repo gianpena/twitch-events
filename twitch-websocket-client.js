@@ -64,7 +64,7 @@ class TwitchClientConnection {
     }
     if (metadata.message_type !== 'notification') return;
 
-    console.log('[TWITCH] xQc went live!');
+    console.log('[TWITCH] streamer went live!');
 
   }
 
