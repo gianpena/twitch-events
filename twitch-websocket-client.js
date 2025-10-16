@@ -1,5 +1,6 @@
 import { WebSocket } from 'ws';
 import { configDotenv } from 'dotenv';
+import { exec } from 'child_process';
 
 configDotenv();
 
@@ -88,8 +89,8 @@ class TwitchClientConnection {
     }
     if (metadata.message_type !== 'notification') return;
 
-    // TODO: update this with actual event handling logic
-    console.log(payload.subscription.type);
+    console.log(`[TWITCH] Received ${payload.subscription.type}`);
+    exec('./eventsub-hook.sh', (error, stdout, stderr) => {})
 
   }
 
