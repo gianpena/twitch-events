@@ -4,6 +4,7 @@ import { configDotenv } from 'dotenv';
 configDotenv();
 
 const TWITCH_BASE_URL = 'wss://eventsub.wss.twitch.tv/ws';
+const EVENT_SUB_URL = 'https://api.twitch.tv/helix/eventsub/subscriptions';
 
 class TwitchClientConnection {
   constructor() {
@@ -55,6 +56,8 @@ class TwitchClientConnection {
     // handling anything except session_welcome
     const { metadata, payload } = json;
     if (metadata.message_type === 'session_reconnect') {
+      console.log(`[TWITCH] Must reconnect to new URL: ${payload.session.reconnect_url}`);
+      console.log('[CLIENT] OK, reconnecting...');
       this.reconnecting = true;
       this.connect(payload.session.reconnect_url);
       return;
@@ -67,7 +70,7 @@ class TwitchClientConnection {
 
   async subscribe() {
 
-    const response = await fetch('https://api.twitch.tv/helix/eventsub/subscriptions', {
+    const response = await fetch(EVENT_SUB_URL, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.ACCESS_TOKEN}`, 
