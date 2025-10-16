@@ -47,7 +47,7 @@ class TwitchClientConnection {
     });
 
     newConnection.on('open', () => {
-      console.log('Connection established');
+      console.log('[CLIENT] Connection established');
     });
 
   }
