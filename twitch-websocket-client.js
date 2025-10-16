@@ -88,7 +88,8 @@ class TwitchClientConnection {
     }
     if (metadata.message_type !== 'notification') return;
 
-    console.log(payload);
+    // TODO: update this with actual event handling logic
+    console.log(payload.subscription.type);
 
   }
 
