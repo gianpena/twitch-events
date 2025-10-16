@@ -23,12 +23,22 @@ class TwitchClientConnection {
       if(metadata.message_type === 'session_welcome') {
         console.log(`[TWITCH] Session established with ID ${payload.session.id}`);
         if(this.ws && this.ws.readyState === WebSocket.OPEN) {
+          this.ws.removeAllListeners(); // Remove old handlers
           this.ws.close();
         }
         console.log('[CLIENT] Updating client state with new session info...');
         this.ws = newConnection;
         this.session_id = payload.session.id;
         this.reconnecting = false;
+        
+        // Attach close handler ONLY after connection is established
+        this.ws.on('close', () => {
+          console.log('[CLIENT] Connection closed unexpectedly, reconnecting...');
+          this.ws = null;
+          this.session_id = null;
+          this.connect(TWITCH_SOCKET_URL);
+        });
+        
         console.log('[CLIENT] Finished updating client state. Subscribing to events in 2 seconds...');
         setTimeout(() => {
           this.subscribe();
@@ -40,16 +50,6 @@ class TwitchClientConnection {
       console.log('Connection established');
     });
 
-    newConnection.on('close', () => {
-      if(!this.reconnecting) {
-        if(this.ws) {
-          if (this.ws.readyState === WebSocket.OPEN) this.ws.close();
-          this.ws = null;
-        }
-        this.connect(TWITCH_SOCKET_URL);
-      }
-    });
-    
   }
 
   handleMessage(json) {
