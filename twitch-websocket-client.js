@@ -29,7 +29,7 @@ class TwitchClientConnection {
         this.ws = newConnection;
         this.session_id = payload.session.id;
         this.reconnecting = false;
-        console.log('[CLIENT] Done. Subscribing to events in 2 seconds...');
+        console.log('[CLIENT] Finished updating client state. Subscribing to events in 2 seconds...');
         setTimeout(() => {
           this.subscribe();
         }, 2000);
