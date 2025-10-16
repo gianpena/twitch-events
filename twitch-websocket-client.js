@@ -5,6 +5,8 @@ configDotenv();
 
 const TWITCH_SOCKET_URL = 'wss://eventsub.wss.twitch.tv/ws';
 const EVENT_SUB_URL = 'https://api.twitch.tv/helix/eventsub/subscriptions';
+let ACCESS_TOKEN = null;
+let REFRESH_TOKEN = null;
 
 class TwitchClientConnection {
   constructor() {
@@ -95,7 +97,7 @@ class TwitchClientConnection {
     const response = await fetch(EVENT_SUB_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.ACCESS_TOKEN}`, 
+        'Authorization': `Bearer ${ACCESS_TOKEN}`, 
         'Client-Id': process.env.CLIENT_ID,
         'Content-Type': 'application/json'
       },
@@ -113,7 +115,12 @@ class TwitchClientConnection {
 }
 
 const client = new TwitchClientConnection();
-console.log(`[CLIENT] Please authorize at https://id.twitch.tv/oauth2/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=http://localhost:3000&response_type=token&scope=user:read:email. Press enter when finished.`);
+console.log(`[CLIENT] Please authorize at https://id.twitch.tv/oauth2/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code&scope=user:read:email.`);
+console.log('[CLIENT] Once you are finished, paste the access and refresh tokens here, then press enter.');
 process.stdin.once('data', () => {
+  ACCESS_TOKEN = data.toString().trim();
+  setInterval(() => {
+    // TODO: Refresh token logic
+  }, 1000 * 3600);
   client.connect(TWITCH_SOCKET_URL);
 });
