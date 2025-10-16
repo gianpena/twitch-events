@@ -32,6 +32,29 @@ app.get('/', async (req, res) => {
   return res.status(auth_response.status).json(auth_data);
 });
 
+app.get('/refresh', async (req, res) => {
+  const { refresh_token } = req.query;
+  if(!refresh_token) {
+    return res.status(400).send('Missing refresh_token parameter');
+  }
+  console.log(`[AUTH] Refreshing token with refresh_token: ${refresh_token}`);
+  const refresh_response = await fetch('https://id.twitch.tv/oauth2/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+      refresh_token,
+      grant_type: 'refresh_token'
+    })
+  });
+
+  const refresh_data = await refresh_response.json();
+  return res.status(refresh_response.status).json(refresh_data);
+});
+
 
 const httpsOptions = {
   key: fs.readFileSync('./ssl/private-key.pem'),
