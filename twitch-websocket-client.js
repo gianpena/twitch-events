@@ -121,7 +121,10 @@ process.stdin.once('data', (data) => {
   const [ access, refresh ] = data.toString().trim().split(' ');
   ACCESS_TOKEN = access;
   REFRESH_TOKEN = refresh;
-  console.log('[CLIENT] Tokens received, attempting to establish websocket connection...');
+  console.log('[CLIENT] Tokens received');
+  console.log(`[CLIENT] Access Token: ${ACCESS_TOKEN}`);
+  console.log(`[CLIENT] Refresh Token: ${REFRESH_TOKEN}`);
+  console.log('[CLIENT] Starting token refresh interval (1 hour)...');
   setInterval( async () => {
     const refresh_response = await fetch(`https://twitch.gianpena.xyz/refresh?refresh_token=${REFRESH_TOKEN}`);
     const refresh_data = await refresh_response.json();
@@ -134,5 +137,6 @@ process.stdin.once('data', (data) => {
       console.error('[CLIENT] Failed to refresh token:', refresh_data);
     }
   }, 1000 * 60 * 60);
+  console.log('[CLIENT] Connecting to Twitch WebSocket server...');
   client.connect(TWITCH_SOCKET_URL);
 });
