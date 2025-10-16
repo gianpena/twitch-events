@@ -1,2 +1,6 @@
 .env
 node_modules/
+
+*.sh
+!eventsub-hook.sh
+!auth.sh
