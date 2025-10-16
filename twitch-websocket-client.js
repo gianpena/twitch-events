@@ -3,7 +3,7 @@ import { configDotenv } from 'dotenv';
 
 configDotenv();
 
-const TWITCH_BASE_URL = 'wss://eventsub.wss.twitch.tv/ws';
+const TWITCH_SOCKET_URL = 'wss://eventsub.wss.twitch.tv/ws';
 const EVENT_SUB_URL = 'https://api.twitch.tv/helix/eventsub/subscriptions';
 
 class TwitchClientConnection {
@@ -46,7 +46,7 @@ class TwitchClientConnection {
           if (this.ws.readyState === WebSocket.OPEN) this.ws.close();
           this.ws = null;
         }
-        this.connect(TWITCH_BASE_URL);
+        this.connect(TWITCH_SOCKET_URL);
       }
     });
     
@@ -100,4 +100,4 @@ class TwitchClientConnection {
 }
 
 const client = new TwitchClientConnection();
-client.connect(TWITCH_BASE_URL);
+client.connect(TWITCH_SOCKET_URL);
