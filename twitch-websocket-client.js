@@ -41,7 +41,29 @@ class TwitchClientConnection {
         
         console.log('[CLIENT] Finished updating client state. Subscribing to events in 2 seconds...');
         setTimeout(() => {
-          this.subscribe();
+          this.subscribe({
+            "type": "stream.online",
+            "version": "1",
+            "condition": {
+              "broadcaster_user_id": process.env.BROADCASTER
+            },
+            "transport": {
+              "method": "websocket",
+              "session_id": this.session_id
+            }
+          });
+          this.subscribe({
+            "type": "channel.update",
+            "version": "2",
+            "condition": {
+              "broadcaster_user_id": process.env.BROADCASTER
+            },
+            "transport": {
+              "method": "websocket",
+              "session_id": this.session_id
+            }
+          });
+
         }, 2000);
       } else this.handleMessage(json);
     });
@@ -64,11 +86,11 @@ class TwitchClientConnection {
     }
     if (metadata.message_type !== 'notification') return;
 
-    console.log('[TWITCH] streamer went live!');
+    console.log(payload);
 
   }
 
-  async subscribe() {
+  async subscribe(body) {
 
     const response = await fetch(EVENT_SUB_URL, {
       method: 'POST',
@@ -77,17 +99,7 @@ class TwitchClientConnection {
         'Client-Id': process.env.CLIENT_ID,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        "type": "stream.online",
-        "version": "1",
-        "condition": {
-          "broadcaster_user_id": process.env.BROADCASTER
-        },
-        "transport": {
-          "method": "websocket",
-          "session_id": this.session_id
-        }
-      })
+      body: JSON.stringify(body)
     });
 
     const eventSubData = await response.json();
