@@ -113,4 +113,7 @@ class TwitchClientConnection {
 }
 
 const client = new TwitchClientConnection();
-client.connect(TWITCH_SOCKET_URL);
+console.log(`[CLIENT] Please authorize at https://id.twitch.tv/oauth2/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=http://localhost:3000&response_type=token&scope=user:read:email. Press enter when finished.`);
+process.stdin.once('data', () => {
+  client.connect(TWITCH_SOCKET_URL);
+});
