@@ -90,15 +90,12 @@ class TwitchClientConnection {
       })
     });
 
-    console.log(`[CLIENT] Subscription request processed with status ${response.status}`);
-    if(!response.ok) {
-      const eventSubData = await response.json();
-      const formattedError = JSON.stringify(eventSubData, null, 2)
-        .split('\n')
-        .map(line => `[CLIENT] ${line}`)
-        .join('\n');
-      console.error(formattedError);
-    }
+    const eventSubData = await response.json();
+    const formattedJson = JSON.stringify(eventSubData, null, 2)
+      .split('\n')
+      .map(line => `[CLIENT] ${line}`)
+      .join('\n');
+    console.log(formattedJson);
 
   }
 }
