@@ -93,7 +93,11 @@ class TwitchClientConnection {
     console.log(`[CLIENT] Subscription request processed with status ${response.status}`);
     if(!response.ok) {
       const eventSubData = await response.json();
-      console.error('[CLIENT] Failed to subscribe to event:', eventSubData);
+      const formattedError = JSON.stringify(eventSubData, null, 2)
+        .split('\n')
+        .map(line => `[CLIENT] ${line}`)
+        .join('\n');
+      console.error(formattedError);
     }
 
   }
