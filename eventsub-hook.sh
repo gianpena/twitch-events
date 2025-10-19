@@ -1,10 +1,12 @@
 #!/bin/bash
-pinctrl set 17 op dl
+PIN=17
+
+pinctrl set "$PIN" op dl
 
 function blink() {
-  pinctrl set 17 op dh
+  pinctrl set "$PIN" op dh
   sleep 0.3
-  pinctrl set 17 op dl
+  pinctrl set "$PIN" op dl
   sleep 0.2
 }
 
