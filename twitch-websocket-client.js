@@ -95,7 +95,7 @@ class TwitchClientConnection {
     if (metadata.message_type !== 'notification') return;
 
     console.log(`[${formatDateTime()}] [TWITCH] Received ${payload.subscription.type}`);
-    exec('./eventsub-hook.sh', (error, stdout, stderr) => {})
+    exec(`./eventsub-hook.sh "${payload.subscription.type}"`, (error, stdout, stderr) => {})
 
   }
 
