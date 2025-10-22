@@ -7,12 +7,17 @@ import { configDotenv } from 'dotenv';
 const app = express();
 configDotenv();
 
+const DATETIME_FORMAT = 'MM/dd/yy HH:mm:ss';
+function formatDateTime() {
+  return format(new Date(), DATETIME_FORMAT);
+}
+
 app.get('/', async (req, res) => {
   const { code } = req.query;
   if(!code) {
     return res.status(400).send('Missing code parameter');
   }
-  console.log(`[AUTH] Received code: ${code}`);
+  console.log(`[${formatDateTime()}] [AUTH] Received code: ${code}`);
 
   const auth_response = await fetch('https://id.twitch.tv/oauth2/token', {
     method: 'POST',
@@ -37,7 +42,7 @@ app.get('/refresh', async (req, res) => {
   if(!refresh_token) {
     return res.status(400).send('Missing refresh_token parameter');
   }
-  console.log(`[AUTH] Refreshing token with refresh_token: ${refresh_token}`);
+  console.log(`[${formatDateTime()}] [AUTH] Refreshing token with refresh_token: ${refresh_token}`);
   const refresh_response = await fetch('https://id.twitch.tv/oauth2/token', {
     method: 'POST',
     headers: {
@@ -65,5 +70,5 @@ app.use(cors());
 app.use(express.json());
 
 httpsServer.listen(443, () => {
-  console.log(`HTTPS Server running on port 443`);
+  console.log(`[${formatDateTime()}] [SERVER] HTTPS Server running on port 443`);
 });
