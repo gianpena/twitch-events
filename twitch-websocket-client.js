@@ -13,6 +13,7 @@ const TWITCH_SOCKET_URL = 'wss://eventsub.wss.twitch.tv/ws';
 const EVENT_SUB_URL = 'https://api.twitch.tv/helix/eventsub/subscriptions';
 let ACCESS_TOKEN = null;
 let REFRESH_TOKEN = null;
+let isHookRunning = false;
 
 class TwitchClientConnection {
   constructor() {
@@ -95,7 +96,12 @@ class TwitchClientConnection {
     if (metadata.message_type !== 'notification') return;
 
     console.log(`[${formatDateTime()}] [TWITCH] Received ${payload.subscription.type}`);
-    exec(`./eventsub-hook.sh "${payload.subscription.type}"`, (error, stdout, stderr) => {})
+    if (!isHookRunning) {
+      isHookRunning = true;
+      exec(`./eventsub-hook.sh "${payload.subscription.type}"`, (error, stdout, stderr) => {
+        isHookRunning = false;
+      });
+    }
 
   }
 
